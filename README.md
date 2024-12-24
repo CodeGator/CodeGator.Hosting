@@ -1,6 +1,7 @@
 ## CodeGator.Hosting: 
 ---
 
+[![Build Status](https://dev.azure.com/codegator/CodeGator.Hosting/_apis/build/status%2FCodeGator.CodeGator.Hosting?branchName=main)](https://dev.azure.com/codegator/CodeGator.Hosting/_build/latest?definitionId=116&branchName=main)
 
 #### What does it do?
 This package contains hosting extensios used by various CodeGator solutions.
