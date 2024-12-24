@@ -4,7 +4,7 @@
 [![Build Status](https://dev.azure.com/codegator/CodeGator.Hosting/_apis/build/status%2FCodeGator.CodeGator.Hosting?branchName=main)](https://dev.azure.com/codegator/CodeGator.Hosting/_build/latest?definitionId=116&branchName=main)
 
 #### What does it do?
-This package contains hosting extensios used by various CodeGator solutions.
+This package contains hosting extensions used by various CodeGator solutions.
 
 #### What platform(s) does it support?
 * .NET 9.x or higher
@@ -18,9 +18,6 @@ PM> Install-Package CodeGator.Hosting
 If you've spotted a bug in the code please use the project Issues [HERE](https://github.com/CodeGator/CodeGator.Hosting/issues)
 
 We also have a discussion group [HERE](https://github.com/CodeGator/CodeGator.Hosting/discussions)
-
-#### Is there any documentation?
-There is developer documentation [HERE](https://codegator.github.io/CodeGator.Hosting/)
 
 ##### We also blog about projects like this one on our website, [HERE](http://www.codegator.com)
 ---
