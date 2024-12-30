@@ -69,11 +69,10 @@ public static partial class HostExtensions
     /// </summary>
     /// <param name="host">The host to use for the operation.</param>
     /// <param name="action">The delegate to use for the operation.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
     /// <exception cref="ArgumentException">This exception is thrown whenever
     /// any of the arguments are missing, or NULL.</exception>
     /// <example>
-    /// This example demonstrates a typical use of the <see cref="RunDelegate(IHost, Action{IHost, CancellationToken}, CancellationToken)"/>
+    /// This example demonstrates a typical use of the <see cref="RunDelegate(IHost, Action{IHost})"/>
     /// method:
     /// <code>
     /// public void ConfigureServices(IServiceCollection services)
@@ -89,22 +88,16 @@ public static partial class HostExtensions
     /// </example>
     public static void RunDelegate(
         this IHost host,
-        Action<IHost, CancellationToken> action,
-        CancellationToken cancellationToken = default
+        Action<IHost> action
         )
     {
         try
         {
-            action(
-                host,
-                cancellationToken
-                );
+            action(host);
         }
         finally
         {
-            host.StopAsync(
-                cancellationToken
-                ).Wait(cancellationToken);
+            host.StopAsync().Wait();
         }
     }
 

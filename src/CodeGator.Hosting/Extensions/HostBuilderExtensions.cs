@@ -21,17 +21,16 @@ public static partial class HostBuilderExtensions
     /// </summary>
     /// <param name="hostBuilder">The host builder to use for the operation.</param>
     /// <param name="hostDelegate">The delegate to use for the operation.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
     /// <exception cref="ArgumentException">This exception is thrown whenever
     /// any of the arguments are missing, or NULL.</exception>
     /// <example>
-    /// This example demonstrates a typical use of the <see cref="RunDelegate(IHostBuilder, Action{IHost, CancellationToken}, CancellationToken)"/>
+    /// This example demonstrates a typical use of the <see cref="RunDelegate(IHostBuilder, Action{IHost})"/>
     /// method:
     /// <code>
     /// public void ConfigureServices(IServiceCollection services)
     /// {
     ///     Host.CreateDefaultBuilder()
-    ///         .RunDelegate((host, token) => 
+    ///         .RunDelegate((host) => 
     ///         {
     ///             Console.WriteLine("Hello World");
     ///         });
@@ -40,8 +39,7 @@ public static partial class HostBuilderExtensions
     /// </example>
     public static void RunDelegate(
        this IHostBuilder hostBuilder,
-       Action<IHost, CancellationToken> hostDelegate,
-       CancellationToken cancellationToken = default
+       Action<IHost> hostDelegate
        )
     {
         var host = hostBuilder.UseConsoleLifetime()
@@ -50,15 +48,12 @@ public static partial class HostBuilderExtensions
         try
         {
             hostDelegate(
-                host,
-                cancellationToken
+                host
                 );
         }
         finally
         {
-            host.StopAsync(
-                cancellationToken
-                ).Wait(cancellationToken);
+            host.StopAsync().Wait();
         }
     }
 
