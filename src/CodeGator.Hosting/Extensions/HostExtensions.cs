@@ -105,6 +105,46 @@ public static partial class HostExtensions
 
     /// <summary>
     /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
+    /// object.
+    /// </summary>
+    /// <param name="host">The host to use for the operation.</param>
+    /// <param name="action">The delegate to use for the operation.</param>
+    /// <exception cref="ArgumentException">This exception is thrown whenever
+    /// any of the arguments are missing, or NULL.</exception>
+    /// <example>
+    /// This example demonstrates a typical use of the <see cref="RunDelegate(IHost, Action)"/>
+    /// method:
+    /// <code>
+    /// public void ConfigureServices(IServiceCollection services)
+    /// {
+    ///     Host.CreateDefaultBuilder()
+    ///         .Build()
+    ///         .RunDelegate(() => 
+    ///         {
+    ///             Console.WriteLine("Hello World");
+    ///         });
+    /// }
+    /// </code>
+    /// </example>
+    public static void RunDelegate(
+        this IHost host,
+        Action action
+        )
+    {
+        try
+        {
+            action();
+        }
+        finally
+        {
+            host.StopAsync().Wait();
+        }
+    }
+
+    // *******************************************************************
+
+    /// <summary>
+    /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
     /// object, allowing a single instance at any given time to run on the 
     /// given machine.
     /// </summary>

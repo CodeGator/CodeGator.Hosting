@@ -64,6 +64,48 @@ public static partial class HostBuilderExtensions
     /// object.
     /// </summary>
     /// <param name="hostBuilder">The host builder to use for the operation.</param>
+    /// <param name="hostDelegate">The delegate to use for the operation.</param>
+    /// <exception cref="ArgumentException">This exception is thrown whenever
+    /// any of the arguments are missing, or NULL.</exception>
+    /// <example>
+    /// This example demonstrates a typical use of the <see cref="RunDelegate(IHostBuilder, Action)"/>
+    /// method:
+    /// <code>
+    /// public void ConfigureServices(IServiceCollection services)
+    /// {
+    ///     Host.CreateDefaultBuilder()
+    ///         .RunDelegate(() => 
+    ///         {
+    ///             Console.WriteLine("Hello World");
+    ///         });
+    /// }
+    /// </code>
+    /// </example>
+    public static void RunDelegate(
+       this IHostBuilder hostBuilder,
+       Action hostDelegate
+       )
+    {
+        var host = hostBuilder.UseConsoleLifetime()
+            .Build();
+
+        try
+        {
+            hostDelegate();
+        }
+        finally
+        {
+            host.StopAsync().Wait();
+        }
+    }
+
+    // *******************************************************************
+
+    /// <summary>
+    /// This method runs a delegate within the context of the specified <see cref="IHostBuilder"/> 
+    /// object.
+    /// </summary>
+    /// <param name="hostBuilder">The host builder to use for the operation.</param>
     /// <param name="action">The delegate to use for the operation.</param>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <exception cref="ArgumentException">This exception is thrown whenever
