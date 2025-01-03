@@ -3,6 +3,10 @@
 
 [![Build Status](https://dev.azure.com/codegator/CodeGator.Hosting/_apis/build/status%2FCodeGator.CodeGator.Hosting?branchName=main)](https://dev.azure.com/codegator/CodeGator.Hosting/_build/latest?definitionId=116&branchName=main)
 
+![NuGet Version](https://img.shields.io/nuget/v/CodeGator.Hosting)
+
+![NuGet Downloads](https://img.shields.io/nuget/dt/CodeGator.Hosting)
+
 #### What does it do?
 This package contains hosting extensions used by various CodeGator solutions.
 
