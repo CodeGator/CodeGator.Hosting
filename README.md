@@ -11,7 +11,7 @@
 This package contains hosting extensions used by various CodeGator solutions.
 
 #### What platform(s) does it support?
-* .NET 9.x or higher
+* .NET 10.x or higher
 
 #### How do I install it?
 The binary is hosted on [NuGet](https://www.nuget.org/packages/Codegator.Hosting/). To install the package using the NuGet package manager:
