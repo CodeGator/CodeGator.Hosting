@@ -9,9 +9,15 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/CodeGator/CodeGator.Hosting</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CodeGator/CodeGator.Hosting</RepositoryUrl>
+    <Title>CodeGator Hosting</Title>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="..\..\packageDefaultIcon-128x128.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
