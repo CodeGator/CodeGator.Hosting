@@ -4,25 +4,21 @@ namespace Microsoft.Extensions.Hosting;
 #pragma warning restore IDE0130
 
 /// <summary>
-/// This class utility contains extension methods related to the <see cref="IHostBuilder"/>
-/// type.
+/// This class provides extension methods for <see cref="IHostBuilder"/>.
 /// </summary>
 public static partial class HostBuilderExtensions
 {
-    // *******************************************************************
-    // Public methods.
-    // *******************************************************************
-
-    #region Public methods
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHostBuilder"/> 
-    /// object.
+    /// This method builds a host and runs the supplied delegate on it.
     /// </summary>
-    /// <param name="hostBuilder">The host builder to use for the operation.</param>
-    /// <param name="hostDelegate">The delegate to use for the operation.</param>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// The host uses console lifetime. After the delegate returns, the host is stopped
+    /// synchronously.
+    /// </para>
+    /// </remarks>
+    /// <param name="hostBuilder">The builder used to create the host.</param>
+    /// <param name="hostDelegate">The operation to run with the built host.</param>
     /// <example>
     /// This example demonstrates a typical use of the <see cref="RunDelegate(IHostBuilder, Action{IHost})"/>
     /// method:
@@ -57,16 +53,17 @@ public static partial class HostBuilderExtensions
         }
     }
 
-    // *******************************************************************
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHostBuilder"/> 
-    /// object.
+    /// This method builds a host and runs a parameterless delegate on it.
     /// </summary>
-    /// <param name="hostBuilder">The host builder to use for the operation.</param>
-    /// <param name="hostDelegate">The delegate to use for the operation.</param>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// The host uses console lifetime. After the delegate returns, the host is stopped
+    /// synchronously.
+    /// </para>
+    /// </remarks>
+    /// <param name="hostBuilder">The builder used to create the host.</param>
+    /// <param name="hostDelegate">The operation to run after the host is built.</param>
     /// <example>
     /// This example demonstrates a typical use of the <see cref="RunDelegate(IHostBuilder, Action)"/>
     /// method:
@@ -99,17 +96,20 @@ public static partial class HostBuilderExtensions
         }
     }
 
-    // *******************************************************************
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHostBuilder"/> 
-    /// object.
+    /// This method builds a host and runs a cancellable delegate asynchronously.
     /// </summary>
-    /// <param name="hostBuilder">The host builder to use for the operation.</param>
-    /// <param name="action">The delegate to use for the operation.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// The delegate runs via <see cref="Task.Run(Action, CancellationToken)"/>. The host is
+    /// stopped after that work completes.
+    /// </para>
+    /// </remarks>
+    /// <param name="hostBuilder">The builder used to create the host.</param>
+    /// <param name="action">The operation to run with the host and cancellation token.</param>
+    /// <param name="cancellationToken">A token that can cancel the asynchronous work.</param>
+    /// <returns>A task that completes after the delegate and host shutdown finish.</returns>
+    /// <exception cref="OperationCanceledException">The operation was canceled.</exception>
     public static async Task RunDelegateAsync(
         this IHostBuilder hostBuilder,
         Action<IHost, CancellationToken> action,
@@ -133,6 +133,4 @@ public static partial class HostBuilderExtensions
                 ).ConfigureAwait(false);
         }
     }
-
-    #endregion
 }

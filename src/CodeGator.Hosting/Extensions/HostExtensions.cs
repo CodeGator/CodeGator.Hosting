@@ -4,27 +4,24 @@ namespace Microsoft.Extensions.Hosting;
 #pragma warning restore IDE0130
 
 /// <summary>
-/// This class utility contains extension methods related to the <see cref="IHost"/>
-/// type.
+/// This class provides extension methods for <see cref="IHost"/>.
 /// </summary>
 public static partial class HostExtensions
 {
-    // *******************************************************************
-    // Public methods.
-    // *******************************************************************
-
-    #region Public methods
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
-    /// object.
+    /// This method runs a delegate on the host asynchronously with a token.
     /// </summary>
-    /// <param name="host">The host to use for the operation.</param>
-    /// <param name="action">The delegate to use for the operation.</param>
-    /// <param name="token">A cancellation token.</param>
-    /// <returns>A task to perform the operation.</returns>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// The delegate executes inside <see cref="Task.Run(Action, CancellationToken)"/>. The host
+    /// is stopped after that work completes.
+    /// </para>
+    /// </remarks>
+    /// <param name="host">The host used as the execution context.</param>
+    /// <param name="action">The operation to run with the host and cancellation token.</param>
+    /// <param name="token">A token that can cancel the asynchronous work.</param>
+    /// <returns>A task that completes after the delegate and host shutdown finish.</returns>
+    /// <exception cref="OperationCanceledException">The operation was canceled.</exception>
     /// <example>
     /// This example demonstrates a typical use of the <see cref="RunDelegateAsync(IHost, Action{IHost, CancellationToken}, CancellationToken)"/>
     /// method:
@@ -61,16 +58,17 @@ public static partial class HostExtensions
         }
     }
 
-    // *******************************************************************
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
-    /// object.
+    /// This method runs a delegate that receives the host, then stops it.
     /// </summary>
-    /// <param name="host">The host to use for the operation.</param>
-    /// <param name="action">The delegate to use for the operation.</param>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// After the delegate returns, <see cref="IHost.StopAsync(CancellationToken)"/> is awaited
+    /// synchronously via <see cref="Task.Wait()"/>.
+    /// </para>
+    /// </remarks>
+    /// <param name="host">The host used as the execution context.</param>
+    /// <param name="action">The operation to run with the host instance.</param>
     /// <example>
     /// This example demonstrates a typical use of the <see cref="RunDelegate(IHost, Action{IHost})"/>
     /// method:
@@ -101,16 +99,17 @@ public static partial class HostExtensions
         }
     }
 
-    // *******************************************************************
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
-    /// object.
+    /// This method runs a parameterless delegate on the host, then stops it.
     /// </summary>
-    /// <param name="host">The host to use for the operation.</param>
-    /// <param name="action">The delegate to use for the operation.</param>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// After the delegate returns, <see cref="IHost.StopAsync(CancellationToken)"/> is awaited
+    /// synchronously via <see cref="Task.Wait()"/>.
+    /// </para>
+    /// </remarks>
+    /// <param name="host">The host used as the execution context.</param>
+    /// <param name="action">The operation to run after the host is ready.</param>
     /// <example>
     /// This example demonstrates a typical use of the <see cref="RunDelegate(IHost, Action)"/>
     /// method:
@@ -141,19 +140,21 @@ public static partial class HostExtensions
         }
     }
 
-    // *******************************************************************
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
-    /// object, allowing a single instance at any given time to run on the 
-    /// given machine.
+    /// This method runs the action when the process acquires the app mutex.
     /// </summary>
-    /// <typeparam name="TProgram">The type of associated .NET program</typeparam>
-    /// <param name="host">The host to use for the operation.</param>
-    /// <param name="action">The delegate to use for the operation.</param>
-    /// <returns>True if the delegate was run; false otherwise.</returns>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
+    /// <remarks>
+    /// <para>
+    /// A named system mutex limits one concurrent run per application. When the mutex is
+    /// acquired within one second, <paramref name="action"/> runs and the method returns
+    /// <see langword="true"/>; otherwise it returns <see langword="false"/>. An abandoned mutex
+    /// is treated as recoverable so the action may still run.
+    /// </para>
+    /// </remarks>
+    /// <typeparam name="TProgram">A type token used to distinguish mutex scope between programs.</typeparam>
+    /// <param name="host">The host passed to the action when it runs.</param>
+    /// <param name="action">The operation to run at most once per successful mutex acquisition.</param>
+    /// <returns><see langword="true"/> if the action ran; otherwise <see langword="false"/>.</returns>
     /// <example>
     /// This example demonstrates how to use the <see cref="RunOnce{TProgram}(IHost, Action{IHost})"/> 
     /// method:
@@ -216,27 +217,31 @@ public static partial class HostExtensions
         return false;
     }
 
-    // *******************************************************************
-
     /// <summary>
-    /// This method runs a delegate within the context of the specified <see cref="IHost"/> 
-    /// object, allowing a single instance at any given time to run on the 
-    /// given machine.
+    /// This method runs the action asynchronously after taking the app mutex.
     /// </summary>
-    /// <typeparam name="TProgram">The type of associated .NET program</typeparam>
-    /// <param name="host">The host to use for the operation.</param>
-    /// <param name="action">The delegate to use for the operation.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
-    /// <returns>True if the delegate was run; false otherwise.</returns>
-    /// <exception cref="ArgumentException">This exception is thrown whenever
-    /// any of the arguments are missing, or NULL.</exception>
     /// <remarks>
     /// <para>
-    /// This method is intended to wrap the logic in the main entry point of
-    /// a .NET process. It then prevents that logic from being run more than 
-    /// once simultaneously. 
+    /// A named system mutex limits one concurrent run per application. When the mutex is
+    /// acquired within one second, <paramref name="action"/> is scheduled with
+    /// <see cref="Task.Run(Action, CancellationToken)"/> and the method returns
+    /// <see langword="true"/>; otherwise it returns <see langword="false"/>. An abandoned mutex
+    /// is treated as recoverable so the action may still run.
+    /// </para>
+    /// <para>
+    /// This method is intended to wrap logic in a process main entry point so it cannot run
+    /// more than once at the same time.
     /// </para>
     /// </remarks>
+    /// <typeparam name="TProgram">A type token used to distinguish mutex scope between programs.</typeparam>
+    /// <param name="host">The host passed to the action when it runs.</param>
+    /// <param name="action">The operation to run at most once per successful mutex acquisition.</param>
+    /// <param name="cancellationToken">A token that can cancel asynchronous work.</param>
+    /// <returns>
+    /// A task whose result is <see langword="true"/> if the action ran; otherwise
+    /// <see langword="false"/>.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">The operation was canceled.</exception>
     /// <example>
     /// This example demonstrates how to use the <see cref="RunOnceAsync{TProgram}(IHost, Action{IHost}, CancellationToken)"/> 
     /// method:
@@ -313,6 +318,4 @@ public static partial class HostExtensions
 
         return false;
     }
-
-    #endregion
 }

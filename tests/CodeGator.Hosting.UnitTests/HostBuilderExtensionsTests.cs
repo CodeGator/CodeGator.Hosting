@@ -3,9 +3,15 @@ using Microsoft.Extensions.Hosting;
 
 namespace CodeGator.Hosting.UnitTests;
 
+/// <summary>
+/// This class contains unit tests for <see cref="HostBuilderExtensions"/> methods.
+/// </summary>
 [TestClass]
 public sealed class HostBuilderExtensionsTests
 {
+    /// <summary>
+    /// This method verifies RunDelegate receives services from the built host.
+    /// </summary>
     [TestMethod]
     public void RunDelegate_ActionIHost_InvokesDelegateWithBuiltHost()
     {
@@ -22,6 +28,9 @@ public sealed class HostBuilderExtensionsTests
         Assert.IsNotNull(captured);
     }
 
+    /// <summary>
+    /// This method verifies RunDelegate runs a parameterless callback.
+    /// </summary>
     [TestMethod]
     public void RunDelegate_Action_InvokesDelegate()
     {
@@ -33,6 +42,10 @@ public sealed class HostBuilderExtensionsTests
         Assert.IsTrue(invoked);
     }
 
+    /// <summary>
+    /// This method verifies RunDelegateAsync runs with the built host.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous test.</returns>
     [TestMethod]
     public async Task RunDelegateAsync_ActionIHostCancellationToken_InvokesDelegate()
     {
@@ -47,6 +60,10 @@ public sealed class HostBuilderExtensionsTests
         Assert.IsNotNull(captured);
     }
 
+    /// <summary>
+    /// This method verifies RunDelegateAsync honors a canceled token.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous test.</returns>
     [TestMethod]
     public async Task RunDelegateAsync_RespectsCancellation()
     {
@@ -62,5 +79,8 @@ public sealed class HostBuilderExtensionsTests
         });
     }
 
+    /// <summary>
+    /// This class is a DI marker type used only by these tests.
+    /// </summary>
     private sealed class MyMarker;
 }
